@@ -5,8 +5,7 @@ CFLAGS			= -Wall -Werror -Wextra -Iincludes
 VFLAG			+= --leak-check=full --show-leak-kinds=all --track-origins=yes # adicionar hellgrind
 HFLAG			= --tool=helgrind
 
-SRCS			=	srcs/main.c \
-					srcs/
+SRCS		+= $(addprefix srcs/, main.c utils.c error_routine.c argv_checker.c)
 
 OBJS			= $(SRCS:.c=.o)
 
