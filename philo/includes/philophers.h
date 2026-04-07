@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 20:24:31 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/07 00:11:15 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/08 00:05:41 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,16 @@
 # include <sys/time.h> // gettimeofday
 # include <unistd.h>   // write, usleep
 						// pthread_mutex_init, pthread_mutex_destroy,
-						// pthread_mutex_lock, pthread_mutex_unlock
+						// pthread_mutex_lock, pthread_mutex_unloc
+
 typedef struct s_lyceum
 {
+	int	nbr_philos;
+	int	nbr_forks;
+	int	time_to_die;
+	int	time_to_eat;
+	int	time_to_sleep;
+	int	amount_times_eat;
 }		t_lyceum;
 
 typedef struct s_featherless_biped
@@ -35,6 +42,9 @@ bool	valid_argv(char **av);
 
 // Error and clean routine
 void	error_argv_checker(void);
+void	error_argv_amount(void);
+void	error_exec_clean(void);
+void	clean_all(void);
 
 // Utils
 size_t	ft_strlen(const char *s);
