@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 20:24:31 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/11 19:25:58 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/11 19:33:26 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,20 @@ typedef struct s_lyceum
 	long				time_to_eat;
 	long				time_to_sleep;
 	long				amount_times_eat;
-	pthread_mutex_t	*mutex_fork;
+/* 	pthread_mutex_t	*mutex_fork;
 	pthread_mutex_t	mutex_print;
-	pthread_mutex_t	monitor_meal;
+	pthread_mutex_t	monitor_meal; */
 }					t_lyceum;
 
 typedef struct s_featherless_biped
 {
-	int				id;
+/* 	int				id;
 	long			last_meal;
 	long			amount_meals;
 	pthread_t		thread_philo;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
-	t_lyceum		*lyceum;
+	t_lyceum		*lyceum; */
 }					t_featherless_biped;
 
 // Parsing
