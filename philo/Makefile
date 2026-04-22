@@ -5,7 +5,7 @@ CFLAGS			= -Wall -Werror -Wextra -Iincludes
 VFLAG			+= --leak-check=full --show-leak-kinds=all --track-origins=yes # adicionar hellgrind
 HFLAG			= --tool=helgrind
 
-SRCS		+= $(addprefix srcs/, main.c utils.c error_routine.c error_msgs.c argv_checker.c parsing.c kronos.c)
+SRCS		+= $(addprefix srcs/, main.c utils.c error_routine.c error_msgs.c argv_checker.c parsing.c kronos.c philo_movements.c)
 
 OBJS			= $(SRCS:.c=.o)
 
@@ -30,9 +30,9 @@ thread: fclean
 	./$(NAME) 5 800 200 200
 
 v:
-	valgrind $(VFLAG) ./$(NAME)
+	valgrind $(VFLAG) ./$(NAME) 5 800 200 200 5
 
-h: $(NAME)
+h: $(NAME) clean
 	valgrind $(HFLAG) ./$(NAME) 5 800 200 200 5
 
 .PHONY: all clean fclean re v

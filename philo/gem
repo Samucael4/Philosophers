@@ -1,0 +1,95 @@
+smarques@Argos:/mnt/c/Users/samuc/Desktop/philo/philo$ make v
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./philo 5 800 200 200 5
+==25782== Memcheck, a memory error detector
+==25782== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==25782== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==25782== Command: ./philo 5 800 200 200 5
+==25782==
+==25782== Invalid write of size 8
+==25782==    at 0x49007FC: memset (string_fortified.h:59)
+==25782==    by 0x49007FC: pthread_mutex_init@@GLIBC_2.2.5 (pthread_mutex_init.c:89)
+==25782==    by 0x1096A1: getting_ready_to_feast (main.c:83)
+==25782==    by 0x10988F: main (main.c:137)
+==25782==  Address 0x20 is not stack'd, malloc'd or (recently) free'd
+==25782==
+==25782==
+==25782== Process terminating with default action of signal 11 (SIGSEGV)
+==25782==  Access not within mapped region at address 0x20
+==25782==    at 0x49007FC: memset (string_fortified.h:59)
+==25782==    by 0x49007FC: pthread_mutex_init@@GLIBC_2.2.5 (pthread_mutex_init.c:89)
+==25782==    by 0x1096A1: getting_ready_to_feast (main.c:83)
+==25782==    by 0x10988F: main (main.c:137)
+==25782==  If you believe this happened as a result of a stack
+==25782==  overflow in your program's main thread (unlikely but
+==25782==  possible), you can try to increase the size of the
+==25782==  main thread stack using the --main-stacksize= flag.
+==25782==  The main thread stack size used in this run was 8388608.
+==25782==
+==25782== HEAP SUMMARY:
+==25782==     in use at exit: 440 bytes in 2 blocks
+==25782==   total heap usage: 2 allocs, 0 frees, 440 bytes allocated
+==25782==
+==25782== 200 bytes in 1 blocks are still reachable in loss record 1 of 2
+==25782==    at 0x4846828: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==25782==    by 0x109300: setting_table (main.c:24)
+==25782==    by 0x109624: getting_ready_to_feast (main.c:76)
+==25782==    by 0x10988F: main (main.c:137)
+==25782==
+==25782== 240 bytes in 1 blocks are still reachable in loss record 2 of 2
+==25782==    at 0x4846828: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==25782==    by 0x1093B5: make_faetherless_bipes (main.c:48)
+==25782==    by 0x109657: getting_ready_to_feast (main.c:78)
+==25782==    by 0x10988F: main (main.c:137)
+==25782==
+==25782== LEAK SUMMARY:
+==25782==    definitely lost: 0 bytes in 0 blocks
+==25782==    indirectly lost: 0 bytes in 0 blocks
+==25782==      possibly lost: 0 bytes in 0 blocks
+==25782==    still reachable: 440 bytes in 2 blocks
+==25782==         suppressed: 0 bytes in 0 blocks
+==25782==
+==25782== For lists of detected and suppressed errors, rerun with: -s
+==25782== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+make: *** [Makefile:33: v] Segmentation fault (core dumped)
+smarques@Argos:/mnt/c/Users/samuc/Desktop/philo/philo$ make h
+cc -g  -Wall -Werror -Wextra -Iincludes -c srcs/main.c -o srcs/main.o
+srcs/main.c: In function ‘getting_ready_to_feast’:
+srcs/main.c:83:28: error: passing argument 1 of ‘pthread_mutex_init’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+   83 |         pthread_mutex_init(&l->mutex_printf, NULL);
+      |                            ^~~~~~~~~~~~~~~~
+      |                            |
+      |                            pthread_mutex_t **
+In file included from srcs/../includes/philophers.h:16,
+                 from srcs/main.c:13:
+/usr/include/pthread.h:781:49: note: expected ‘pthread_mutex_t *’ but argument is of type ‘pthread_mutex_t **’
+  781 | extern int pthread_mutex_init (pthread_mutex_t *__mutex,
+      |                                ~~~~~~~~~~~~~~~~~^~~~~~~
+cc1: all warnings being treated as errors
+make: *** [Makefile:13: srcs/main.o] Error 1
+smarques@Argos:/mnt/c/Users/samuc/Desktop/philo/philo$
+
+tem novo arquivo com as acoes do philos
+removi o memset pois tava absurdo colocar aqui sendo que lycem nem era allocado. como que tu me recomenda algo assim cara? presta atencao noas caoisa. eu tive que debugar isso olhando pro terminal em 1 segundo ja percebi a merda, como que voce nao viu isso de longe?
+
+
+sobre isso: "tenção ao Inicializar:
+
+Na função getting_ready_to_feast, você fez: pthread_mutex_init(l->mutex_printf, NULL); Se mutex_printf for declarado como pthread_mutex_t dentro da struct, você precisa do & comercial (igual fez com a largada): pthread_mutex_init(&l->mutex_printf, NULL); (Passar sem o & comercial vai dar Segfault!)"
+
+se eu muda isso fica com isso:
+smarques@Argos:/mnt/c/Users/samuc/Desktop/philo/philo$ make
+cc -g  -Wall -Werror -Wextra -Iincludes -c srcs/main.c -o srcs/main.o
+srcs/main.c: In function ‘getting_ready_to_feast’:
+srcs/main.c:83:28: error: passing argument 1 of ‘pthread_mutex_init’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+   83 |         pthread_mutex_init(&l->mutex_printf, NULL);
+      |                            ^~~~~~~~~~~~~~~~
+      |                            |
+      |                            pthread_mutex_t **
+In file included from srcs/../includes/philophers.h:16,
+                 from srcs/main.c:13:
+/usr/include/pthread.h:781:49: note: expected ‘pthread_mutex_t *’ but argument is of type ‘pthread_mutex_t **’
+  781 | extern int pthread_mutex_init (pthread_mutex_t *__mutex,
+      |                                ~~~~~~~~~~~~~~~~~^~~~~~~
+cc1: all warnings being treated as errors
+make: *** [Makefile:13: srcs/main.o] Error 1
+smarques@Argos:/mnt/c/Users/samuc/Desktop/philo/philo$

@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/06 23:56:04 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/21 11:32:49 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/22 13:26:14 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ void	getting_proper_args(int argc, char **argv, t_lyceum *l)
 	l->time_to_sleep = ft_atol(argv[4]);
 	if (argv[5])
 		l->amount_times_eat = ft_atol(argv[5]);
+	else
+		l->amount_times_eat = -1;
 	int_checker(l, argc);
 	l->nbr_forks = l->nbr_philos;
 	l->i = 0;

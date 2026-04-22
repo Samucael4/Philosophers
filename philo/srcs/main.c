@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 21:19:51 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/21 16:44:12 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:30:37 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,9 @@ void	getting_ready_to_feast(t_featherless_biped **p, t_lyceum *l)
 	if (!make_faetherless_bipes(p, l))
 		write(2, "erro", 4); // exec_clean em tudo ate agr
 	pthread_mutex_init(&l->sl.mutex_start_line, NULL);
+	// rever se tem que colcoar algo especifico em NULL
+	// e tbm ver do que se trata esse arg
+	pthread_mutex_init(&l->mutex_printf, NULL);
 	l->sl.all_set = false;
 }
 
@@ -100,28 +103,24 @@ void	*routine_of_philo(void *args)
 		pthread_mutex_unlock(&p->knowledge->sl.mutex_start_line);
 		usleep(100);
 	}
+	if (p->id % 2 == 0)
+		usleep(1000);
 	while (1)
 	{
-		if (p->id % 2 == 0)
-			usleep(1000);
-		pthread_mutex_unlock(p->r_fork);
-		pthread_mutex_unlock(p->l_fork);
-		printf("%li %i has taken a fork\n", time_now()
-			- p->knowledge->starting_time, p->id);
+		pthread_mutex_lock(p->r_fork);
+		pthread_mutex_lock(p->l_fork);
+		get_fork_mov(p);
 		p->last_time_eaten = time_now();
-		printf("%li %i is eating\n", time_now() - p->knowledge->starting_time,
-			p->id);
-		usleep(p->knowledge->time_to_eat);
+		eat_mov(p);
+		usleep(p->knowledge->time_to_eat * 1000);
 		pthread_mutex_unlock(p->r_fork);
 		pthread_mutex_unlock(p->l_fork);
-		printf("%li %i is sleeping\n", time_now() - p->knowledge->starting_time,
-			p->id);
-		usleep(p->knowledge->time_to_sleep);
-		printf("%li %i is thinking\n", time_now() - p->knowledge->starting_time,
-			p->id);
+		sleep_mov(p);
+		usleep(p->knowledge->time_to_sleep * 1000);
+		think_mov(p);
+		i++;
 		if (i == p->knowledge->amount_times_eat)
 			break ;
-		i++;
 	}
 	return (NULL);
 }
@@ -131,20 +130,25 @@ int	main(int argc, char *argv[])
 	t_lyceum			l;
 	t_featherless_biped	*p;
 
+	memset(&l, 0, sizeof(t_lyceum)); // sem isso tava explodindo sem valgrind
 	p = NULL;
 	parsing(argc, argv, &l);
 	getting_ready_to_feast(&p, &l);
-	// criar as threads
 	while (l.i < l.nbr_philos)
 	{
 		pthread_create(&p[l.i].thread_philo, NULL, routine_of_philo, &p[l.i]);
 		l.i++;
 	}
-	// testar a ordem das duas linha de baixo
 	p->knowledge->starting_time = time_now();
 	pthread_mutex_lock(&l.sl.mutex_start_line);
 	l.sl.all_set = true;
 	pthread_mutex_unlock(&l.sl.mutex_start_line);
+	// criar funcao thanatos
+	l.i = 0;
+	/* 	while (1)
+		{
+			if (p[l.i].last_time_eaten )
+		} */
 	l.i = 0;
 	// qual a real necessidade do pthread_join???
 	while (l.i < l.nbr_philos)

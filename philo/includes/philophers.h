@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 20:24:31 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/21 16:34:45 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:29:31 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_lyceum
 	long			starting_time;
 	int				i;
 	pthread_mutex_t	*mutex_fork;
+	pthread_mutex_t	mutex_printf;
 	t_start_line	sl;
 	// pthread_mutex_t	mutex_print;
 	// pthread_mutex_t	monitor_meal;
@@ -73,6 +74,12 @@ size_t				ft_strlen(const char *s);
 long				ft_atol(char *str);
 
 // Time stuff
-long				time_now();
+long				time_now(void);
+
+// Movements
+void				get_fork_mov(t_featherless_biped *p);
+void				eat_mov(t_featherless_biped *p);
+void				sleep_mov(t_featherless_biped *p);
+void				think_mov(t_featherless_biped *p);
 
 #endif
