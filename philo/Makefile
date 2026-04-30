@@ -30,7 +30,7 @@ thread: fclean
 	./$(NAME) 5 800 200 200
 
 v:
-	valgrind $(VFLAG) ./$(NAME) 1 800 200 200
+	valgrind $(VFLAG) ./$(NAME) 5 600 200 200
 
 h: $(NAME) clean
 	valgrind $(HFLAG) ./$(NAME) 5 100 200 100

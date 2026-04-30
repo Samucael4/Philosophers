@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 20:24:31 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/30 12:41:45 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/30 18:58:09 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,10 @@ typedef struct s_featherless_biped
 // Parsing
 void				parsing(int argc, char **argv, t_lyceum *l);
 
+// Preparation
+void				getting_ready_to_feast(t_featherless_biped **p,
+						t_lyceum *l);
+
 // Error msgs and clean routine
 void				error_msg(char *str);
 void				error_exec_clean(t_lyceum *l, t_featherless_biped *p);
@@ -73,18 +77,13 @@ void				clean_all(t_featherless_biped *p, t_lyceum *l);
 // Utils
 size_t				ft_strlen(const char *s);
 long				ft_atol(char *str);
-
-// Time
 long				kronos_now(void);
+void				mili_sleep_wraper(long nbr);
 
 // Movements
 void				get_fork_mov(t_featherless_biped *p);
 void				eat_mov(t_featherless_biped *p);
 void				sleep_mov(t_featherless_biped *p);
 void				think_mov(t_featherless_biped *p);
-
-// Preparation
-void				getting_ready_to_feast(t_featherless_biped **p,
-						t_lyceum *l);
 
 #endif

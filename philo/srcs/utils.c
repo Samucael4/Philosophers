@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 00:10:49 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/30 12:45:47 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/30 18:57:21 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,9 @@ long	kronos_now(void)
 	micro_seconds = tv.tv_usec / 1000;
 	time = seconds + micro_seconds;
 	return (time);
+}
+
+void	mili_sleep_wraper(long	nbr)
+{
+	usleep(nbr * 1000);
 }

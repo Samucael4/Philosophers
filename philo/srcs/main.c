@@ -6,13 +6,24 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 21:19:51 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/30 14:08:42 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/30 18:59:51 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philophers.h"
 
-// change the struct typre
+bool	wait_all_start(t_featherless_biped *p)
+{
+	pthread_mutex_lock(&p->knowledge->sl.mutex_start_line);
+	if (p->knowledge->sl.all_set)
+	{
+		pthread_mutex_unlock(&p->knowledge->sl.mutex_start_line);
+		return (true);
+	}
+	pthread_mutex_unlock(&p->knowledge->sl.mutex_start_line);
+	return (false);
+}
+
 void	*routine_of_philo(void *args)
 {
 	int					i;
@@ -23,17 +34,10 @@ void	*routine_of_philo(void *args)
 	i = 0;
 	while (1)
 	{
-		pthread_mutex_lock(&p->knowledge->sl.mutex_start_line);
-		if (p->knowledge->sl.all_set)
-		{
-			pthread_mutex_unlock(&p->knowledge->sl.mutex_start_line);
+		if (wait_all_start(p))
 			break ;
-		}
-		pthread_mutex_unlock(&p->knowledge->sl.mutex_start_line);
 		usleep(100);
 	}
-	// if (p->id % 2 == 0)
-	// 	usleep(1000);
 	while (1)
 	{
 		pthread_mutex_lock(&p->knowledge->mutex_thanatos);
@@ -47,7 +51,14 @@ void	*routine_of_philo(void *args)
 			if (p->knowledge->nbr_forks > 1)
 				pthread_mutex_lock(p->l_fork);
 			else
-				usleep(p->knowledge->time_to_die * 1000);
+			{
+				pthread_mutex_lock(&p->knowledge->mutex_printf);
+				printf("%li %i has taken a fork\n", kronos_now()
+					- p->knowledge->starting_time, p->id);
+				pthread_mutex_unlock(&p->knowledge->mutex_printf);
+				while (!p->knowledge->thread_cut_by_atropos)
+					usleep(10);
+			}
 		}
 		else
 		{
@@ -56,7 +67,8 @@ void	*routine_of_philo(void *args)
 			pthread_mutex_lock(p->r_fork);
 		}
 		get_fork_mov(p);
-		get_fork_mov(p);
+		if (p->knowledge->nbr_forks > 1)
+			get_fork_mov(p);
 		pthread_mutex_lock(&p->knowledge->mutex_amount_meal);
 		p->amount_meals++;
 		pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
@@ -69,7 +81,7 @@ void	*routine_of_philo(void *args)
 		if (death_check)
 		{
 			if (p->knowledge->nbr_forks > 1)
-				pthread_mutex_lock(p->l_fork);
+				pthread_mutex_unlock(p->l_fork);
 			pthread_mutex_unlock(p->r_fork);
 			break ;
 		}
@@ -104,12 +116,22 @@ void	*routine_of_philo(void *args)
 		}
 		pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
 		if (p->knowledge->time_to_sleep < p->knowledge->time_to_eat)
-			usleep((p->knowledge->time_to_eat - p->knowledge->time_to_sleep)
-				* 1000);
+		{
+			if (p->knowledge->nbr_forks % 2 == 0)
+				usleep((p->knowledge->time_to_eat - p->knowledge->time_to_sleep)
+					* 1000);
+			else
+			{
+				usleep((p->knowledge->time_to_eat * 2
+						- p->knowledge->time_to_sleep) * 1000);
+			}
+		}
 		i++;
 	}
 	return (NULL);
 }
+
+// NAO ESQUECER README
 
 int	main(int argc, char *argv[])
 {
