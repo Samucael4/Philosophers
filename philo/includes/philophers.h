@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 20:24:31 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/22 16:29:31 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/30 12:41:45 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,44 +42,49 @@ typedef struct s_lyceum
 	int				i;
 	pthread_mutex_t	*mutex_fork;
 	pthread_mutex_t	mutex_printf;
+	pthread_mutex_t	mutex_thanatos;
+	pthread_mutex_t	mutex_amount_meal;
+	bool			thread_cut_by_atropos;
+	bool			satisfied;
 	t_start_line	sl;
-	// pthread_mutex_t	mutex_print;
-	// pthread_mutex_t	monitor_meal;
 }					t_lyceum;
 
+// verificar se estou inicializando em lugares corretos as
+// infos que tem de ser inicializadas
 typedef struct s_featherless_biped
 {
 	int				id;
-	pthread_t		thread_philo;
 	t_lyceum		*knowledge;
+	pthread_t		thread_philo;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
 	long			last_time_eaten;
-	// int				id;
-	// long		last_meal;
-	// long		amount_meals;
+	long			amount_meals;
 }					t_featherless_biped;
 
 // Parsing
 void				parsing(int argc, char **argv, t_lyceum *l);
-bool				valid_argv(char **av);
-void				getting_proper_args(int argc, char **argv, t_lyceum *l);
 
 // Error msgs and clean routine
 void				error_msg(char *str);
 void				error_exec_clean(t_lyceum *l, t_featherless_biped *p);
+void				clean_all(t_featherless_biped *p, t_lyceum *l);
 
 // Utils
 size_t				ft_strlen(const char *s);
 long				ft_atol(char *str);
 
-// Time stuff
-long				time_now(void);
+// Time
+long				kronos_now(void);
 
 // Movements
 void				get_fork_mov(t_featherless_biped *p);
 void				eat_mov(t_featherless_biped *p);
 void				sleep_mov(t_featherless_biped *p);
 void				think_mov(t_featherless_biped *p);
+
+// Preparation
+void				getting_ready_to_feast(t_featherless_biped **p,
+						t_lyceum *l);
 
 #endif

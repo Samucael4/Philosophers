@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   argv_checker.c                                     :+:      :+:    :+:   */
+/*   arg_check_get.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/06 23:56:04 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/22 13:26:14 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/30 12:46:29 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	ft_isdigit(int c)
 	return (0);
 }
 
-bool	valid_argv(char **av)
+static bool	valid_argv(char **av)
 {
 	int	i;
 	int	j;
@@ -47,8 +47,7 @@ bool	valid_argv(char **av)
 	return (true);
 }
 
-// correto checar 0 para todos?
-void	int_checker(t_lyceum *l, int argc)
+static void	int_checker(t_lyceum *l, int argc)
 {
 	(void)argc;
 	if (l->nbr_philos > INT_MAX || l->nbr_philos <= 0)
@@ -67,7 +66,7 @@ void	int_checker(t_lyceum *l, int argc)
 	}
 }
 
-void	getting_proper_args(int argc, char **argv, t_lyceum *l)
+static void	getting_proper_args(int argc, char **argv, t_lyceum *l)
 {
 	l->nbr_philos = ft_atol(argv[1]);
 	l->time_to_die = ft_atol(argv[2]);
@@ -81,4 +80,14 @@ void	getting_proper_args(int argc, char **argv, t_lyceum *l)
 	l->nbr_forks = l->nbr_philos;
 	l->i = 0;
 	l->mutex_fork = NULL;
+}
+
+void	parsing(int argc, char **argv, t_lyceum *l)
+{
+	if (argv)
+		if (!valid_argv(argv))
+			error_msg("Invalid format and chars for the arguments!\n");
+	if (argc > 6 || (argc != 5 && argc != 6))
+		error_msg("Invalid amount of arguments, need 4 or 5!\n");
+	getting_proper_args(argc, argv, l);
 }

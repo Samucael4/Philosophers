@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 00:10:49 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/11 18:45:52 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/30 12:45:47 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,4 +42,19 @@ long	ft_atol(char *str)
 	while (*str && (*str >= '0' && *str <= '9'))
 		number = (number * 10) + (*str++ - '0');
 	return ((number * sign));
+}
+
+long	kronos_now(void)
+{
+	struct timeval tv;
+	long time;
+	long seconds;
+	long micro_seconds;
+
+	if (gettimeofday(&tv, NULL) == -1)
+		error_msg("Failed function call gettimeofday!\n");
+	seconds = tv.tv_sec * 1000;
+	micro_seconds = tv.tv_usec / 1000;
+	time = seconds + micro_seconds;
+	return (time);
 }

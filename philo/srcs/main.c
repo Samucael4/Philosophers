@@ -6,88 +6,17 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 21:19:51 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/22 16:30:37 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/30 14:08:42 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philophers.h"
 
-// mudar para int, se der tudo certo, retornar -1
-// se der erro, retorna i, que eh o index que deu errado
-// isso vai ajudar a criar um loop para dar
-// destroy nas mutex criadas ate entao e limpar tudo
-bool	setting_table(t_lyceum *l)
-{
-	int	i;
-
-	i = 0;
-	l->mutex_fork = malloc(sizeof(pthread_mutex_t) * l->nbr_forks);
-	if (!l->mutex_fork)
-		return (false);
-	while (i < l->nbr_forks)
-	{
-		if (pthread_mutex_init(&l->mutex_fork[i], NULL))
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
-// preciso rever o que tem que ser verificado caso null
-// adcionei verificacoes e etapas a mais, preciso ver se os ajustes esto
-// certo e coerentes / testar com e sem para ver resultado
-bool	make_faetherless_bipes(t_featherless_biped **p, t_lyceum *l)
-{
-	int		i;
-	int		size;
-	bool	firts_philo;
-
-	firts_philo = true;
-	i = 0;
-	size = sizeof(t_featherless_biped) * l->nbr_philos;
-	*p = malloc(size);
-	if (!*p)
-		return (false);
-	while (i < l->nbr_philos)
-	{
-		(*p)[i].r_fork = NULL;
-		(*p)[i].l_fork = NULL;
-		if (firts_philo)
-		{
-			(*p)[i].r_fork = &l->mutex_fork[i];
-			(*p)[i].l_fork = &l->mutex_fork[l->nbr_forks - 1];
-			(*p)[i].id = i;
-			(*p)[i].knowledge = l;
-			firts_philo = false;
-			i++;
-			continue ;
-		}
-		(*p)[i].r_fork = &l->mutex_fork[i];
-		(*p)[i].l_fork = &l->mutex_fork[i - 1];
-		(*p)[i].id = i;
-		(*p)[i].knowledge = l;
-		i++;
-	}
-	return (true);
-}
-
-void	getting_ready_to_feast(t_featherless_biped **p, t_lyceum *l)
-{
-	if (!setting_table(l))
-		write(2, "erro", 4); // exec clean em tudo
-	if (!make_faetherless_bipes(p, l))
-		write(2, "erro", 4); // exec_clean em tudo ate agr
-	pthread_mutex_init(&l->sl.mutex_start_line, NULL);
-	// rever se tem que colcoar algo especifico em NULL
-	// e tbm ver do que se trata esse arg
-	pthread_mutex_init(&l->mutex_printf, NULL);
-	l->sl.all_set = false;
-}
-
 // change the struct typre
 void	*routine_of_philo(void *args)
 {
 	int					i;
+	bool				death_check;
 	t_featherless_biped	*p;
 
 	p = (t_featherless_biped *)args;
@@ -103,24 +32,81 @@ void	*routine_of_philo(void *args)
 		pthread_mutex_unlock(&p->knowledge->sl.mutex_start_line);
 		usleep(100);
 	}
-	if (p->id % 2 == 0)
-		usleep(1000);
+	// if (p->id % 2 == 0)
+	// 	usleep(1000);
 	while (1)
 	{
-		pthread_mutex_lock(p->r_fork);
-		pthread_mutex_lock(p->l_fork);
+		pthread_mutex_lock(&p->knowledge->mutex_thanatos);
+		death_check = p->knowledge->thread_cut_by_atropos;
+		pthread_mutex_unlock(&p->knowledge->mutex_thanatos);
+		if (death_check)
+			break ;
+		if (p->id % 2 != 0)
+		{
+			pthread_mutex_lock(p->r_fork);
+			if (p->knowledge->nbr_forks > 1)
+				pthread_mutex_lock(p->l_fork);
+			else
+				usleep(p->knowledge->time_to_die * 1000);
+		}
+		else
+		{
+			if (p->knowledge->nbr_forks > 1)
+				pthread_mutex_lock(p->l_fork);
+			pthread_mutex_lock(p->r_fork);
+		}
 		get_fork_mov(p);
-		p->last_time_eaten = time_now();
+		get_fork_mov(p);
+		pthread_mutex_lock(&p->knowledge->mutex_amount_meal);
+		p->amount_meals++;
+		pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
+		pthread_mutex_lock(&p->knowledge->mutex_thanatos);
+		p->last_time_eaten = kronos_now();
+		pthread_mutex_unlock(&p->knowledge->mutex_thanatos);
+		pthread_mutex_lock(&p->knowledge->mutex_thanatos);
+		death_check = p->knowledge->thread_cut_by_atropos;
+		pthread_mutex_unlock(&p->knowledge->mutex_thanatos);
+		if (death_check)
+		{
+			if (p->knowledge->nbr_forks > 1)
+				pthread_mutex_lock(p->l_fork);
+			pthread_mutex_unlock(p->r_fork);
+			break ;
+		}
 		eat_mov(p);
 		usleep(p->knowledge->time_to_eat * 1000);
-		pthread_mutex_unlock(p->r_fork);
-		pthread_mutex_unlock(p->l_fork);
+		if (p->id % 2 != 0)
+		{
+			pthread_mutex_unlock(p->l_fork);
+			pthread_mutex_unlock(p->r_fork);
+		}
+		else
+		{
+			pthread_mutex_unlock(p->r_fork);
+			pthread_mutex_unlock(p->l_fork);
+		}
+		pthread_mutex_lock(&p->knowledge->mutex_thanatos);
+		death_check = p->knowledge->thread_cut_by_atropos;
+		pthread_mutex_unlock(&p->knowledge->mutex_thanatos);
+		if (death_check)
+			break ;
 		sleep_mov(p);
 		usleep(p->knowledge->time_to_sleep * 1000);
 		think_mov(p);
+		pthread_mutex_lock(&p->knowledge->mutex_amount_meal);
+		if (p->knowledge->amount_times_eat != -1)
+		{
+			if (p->amount_meals == p->knowledge->amount_times_eat)
+			{
+				pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
+				break ;
+			}
+		}
+		pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
+		if (p->knowledge->time_to_sleep < p->knowledge->time_to_eat)
+			usleep((p->knowledge->time_to_eat - p->knowledge->time_to_sleep)
+				* 1000);
 		i++;
-		if (i == p->knowledge->amount_times_eat)
-			break ;
 	}
 	return (NULL);
 }
@@ -129,45 +115,85 @@ int	main(int argc, char *argv[])
 {
 	t_lyceum			l;
 	t_featherless_biped	*p;
+	bool				meals_checker;
+	long				last_meal_checker;
 
-	memset(&l, 0, sizeof(t_lyceum)); // sem isso tava explodindo sem valgrind
+	memset(&l, 0, sizeof(t_lyceum));
 	p = NULL;
 	parsing(argc, argv, &l);
 	getting_ready_to_feast(&p, &l);
+	p->knowledge->starting_time = kronos_now();
 	while (l.i < l.nbr_philos)
 	{
+		p[l.i].last_time_eaten = p->knowledge->starting_time;
 		pthread_create(&p[l.i].thread_philo, NULL, routine_of_philo, &p[l.i]);
 		l.i++;
 	}
-	p->knowledge->starting_time = time_now();
 	pthread_mutex_lock(&l.sl.mutex_start_line);
 	l.sl.all_set = true;
 	pthread_mutex_unlock(&l.sl.mutex_start_line);
-	// criar funcao thanatos
 	l.i = 0;
-	/* 	while (1)
+	while (1)
+	{
+		l.i = 0;
+		l.satisfied = true;
+		while (l.i < l.nbr_philos)
 		{
-			if (p[l.i].last_time_eaten )
-		} */
+			if ((l.amount_times_eat != -1)) // significa que tem limite
+			{
+				pthread_mutex_lock(&l.mutex_amount_meal);
+				meals_checker = p[l.i].amount_meals != l.amount_times_eat;
+				pthread_mutex_unlock(&l.mutex_amount_meal);
+				if (meals_checker)
+				{
+					l.satisfied = false;
+					pthread_mutex_lock(&l.mutex_thanatos);
+					last_meal_checker = kronos_now() - p[l.i].last_time_eaten;
+					pthread_mutex_unlock(&l.mutex_thanatos);
+					if (last_meal_checker > l.time_to_die)
+					{
+						pthread_mutex_lock(&l.mutex_thanatos);
+						l.thread_cut_by_atropos = true;
+						pthread_mutex_unlock(&l.mutex_thanatos);
+						pthread_mutex_lock(&l.mutex_printf);
+						printf("%li %i died\n", kronos_now() - l.starting_time,
+							p[l.i].id);
+						pthread_mutex_unlock(&l.mutex_printf);
+						break ;
+					}
+				}
+			}
+			else // nao tem limite de comidas
+			{
+				l.satisfied = false;
+				pthread_mutex_lock(&l.mutex_thanatos);
+				last_meal_checker = kronos_now() - p[l.i].last_time_eaten;
+				pthread_mutex_unlock(&l.mutex_thanatos);
+				if (last_meal_checker > l.time_to_die)
+				{
+					pthread_mutex_lock(&l.mutex_thanatos);
+					l.thread_cut_by_atropos = true;
+					pthread_mutex_unlock(&l.mutex_thanatos);
+					pthread_mutex_lock(&l.mutex_printf);
+					printf("%li %i died\n", kronos_now() - l.starting_time,
+						p[l.i].id);
+					pthread_mutex_unlock(&l.mutex_printf);
+					break ;
+				}
+			}
+			l.i++;
+		}
+		// acho legar proteger com mutex aqui
+		if (l.satisfied || l.thread_cut_by_atropos)
+			break ;
+		usleep(100);
+	}
 	l.i = 0;
-	// qual a real necessidade do pthread_join???
 	while (l.i < l.nbr_philos)
 	{
-		// reviar a necessidad do segundo arg
 		pthread_join(p[l.i].thread_philo, NULL);
 		l.i++;
 	}
-	// clean_all();
+	clean_all(p, &l);
 	return (EXIT_SUCCESS);
 }
-
-/*duvidas
-adcionei barreira de inicio para esperar o while crair todas as threads para so depois
-comecar a fazer a rotina*/
-
-/*o que faz segunda arg da mutex_init e pq ta null?
-"Crie uma função que usa o gettimeofday (eu vi que você já testou
-isso na sua pasta de testes!) para pegar o tempo atual em milissegundos e salvar nessa variável
-logo antes de criar as threads." isso que voce
-falou nao eh perigoso? nao leva tempo para criar a threads?
-isso nao causaria uma decincronissidade de tempo?*/
