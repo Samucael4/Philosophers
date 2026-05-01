@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 21:19:51 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/30 18:59:51 by smarques         ###   ########.fr       */
+/*   Updated: 2026/04/30 23:01:27 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	*routine_of_philo(void *args)
 	{
 		if (wait_all_start(p))
 			break ;
-		usleep(100);
+		usleep(50);
 	}
 	while (1)
 	{
@@ -115,7 +115,7 @@ void	*routine_of_philo(void *args)
 			}
 		}
 		pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
-		if (p->knowledge->time_to_sleep < p->knowledge->time_to_eat)
+		if (p->knowledge->time_to_sleep <= p->knowledge->time_to_eat)
 		{
 			if (p->knowledge->nbr_forks % 2 == 0)
 				usleep((p->knowledge->time_to_eat - p->knowledge->time_to_sleep)
@@ -169,10 +169,12 @@ int	main(int argc, char *argv[])
 				if (meals_checker)
 				{
 					l.satisfied = false;
+					// pthread_mutex_lock(&l.mutex_thanatos);
+					// last_meal_checker = kronos_now()
+					//	- p[l.i].last_time_eaten;
+					// pthread_mutex_unlock(&l.mutex_thanatos);
 					pthread_mutex_lock(&l.mutex_thanatos);
-					last_meal_checker = kronos_now() - p[l.i].last_time_eaten;
-					pthread_mutex_unlock(&l.mutex_thanatos);
-					if (last_meal_checker > l.time_to_die)
+					if (kronos_now() - p[l.i].last_time_eaten >= l.time_to_die)
 					{
 						pthread_mutex_lock(&l.mutex_thanatos);
 						l.thread_cut_by_atropos = true;
@@ -181,8 +183,10 @@ int	main(int argc, char *argv[])
 						printf("%li %i died\n", kronos_now() - l.starting_time,
 							p[l.i].id);
 						pthread_mutex_unlock(&l.mutex_printf);
+						pthread_mutex_unlock(&l.mutex_thanatos);
 						break ;
 					}
+					pthread_mutex_unlock(&l.mutex_thanatos);
 				}
 			}
 			else // nao tem limite de comidas
@@ -191,7 +195,7 @@ int	main(int argc, char *argv[])
 				pthread_mutex_lock(&l.mutex_thanatos);
 				last_meal_checker = kronos_now() - p[l.i].last_time_eaten;
 				pthread_mutex_unlock(&l.mutex_thanatos);
-				if (last_meal_checker > l.time_to_die)
+				if (last_meal_checker >= l.time_to_die)
 				{
 					pthread_mutex_lock(&l.mutex_thanatos);
 					l.thread_cut_by_atropos = true;
@@ -208,7 +212,7 @@ int	main(int argc, char *argv[])
 		// acho legar proteger com mutex aqui
 		if (l.satisfied || l.thread_cut_by_atropos)
 			break ;
-		usleep(100);
+		usleep(20);
 	}
 	l.i = 0;
 	while (l.i < l.nbr_philos)

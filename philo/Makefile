@@ -53,3 +53,5 @@ h: $(NAME) clean
 
 # como checar death delay?
 # com o checar se nao rouba garfo?
+
+#./philo 100 200 60 60
