@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 20:24:31 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/30 18:58:09 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/02 20:17:20 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,23 @@ size_t				ft_strlen(const char *s);
 long				ft_atol(char *str);
 long				kronos_now(void);
 void				mili_sleep_wraper(long nbr);
+bool				mini_sleeps(t_lyceum *l, long start_action,
+						long time_action);
 
 // Movements
 void				get_fork_mov(t_featherless_biped *p);
 void				eat_mov(t_featherless_biped *p);
 void				sleep_mov(t_featherless_biped *p);
 void				think_mov(t_featherless_biped *p);
+
+// Helpers main
+void				wraper_threads_join(t_lyceum *l, t_featherless_biped *p);
+bool				end_simulation_verification(t_lyceum *l,
+						t_featherless_biped *p);
+void				wraper_threads_create(t_lyceum *l, t_featherless_biped *p);
+bool				argos_core_loop(t_lyceum *l, t_featherless_biped *p);
+
+// Routine and helpers
+void				*routine_of_philo(void *args);
 
 #endif

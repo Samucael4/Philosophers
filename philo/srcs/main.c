@@ -6,11 +6,13 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 21:19:51 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/30 23:01:27 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/02 20:17:52 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philophers.h"
+
+// HELPERS DA ROUTINE
 
 bool	wait_all_start(t_featherless_biped *p)
 {
@@ -36,8 +38,10 @@ void	*routine_of_philo(void *args)
 	{
 		if (wait_all_start(p))
 			break ;
-		usleep(50);
+		usleep(20);
 	}
+	if (p->id % 2 == 0)
+		usleep(100);
 	while (1)
 	{
 		pthread_mutex_lock(&p->knowledge->mutex_thanatos);
@@ -86,7 +90,12 @@ void	*routine_of_philo(void *args)
 			break ;
 		}
 		eat_mov(p);
-		usleep(p->knowledge->time_to_eat * 1000);
+		if (!mini_sleeps(p->knowledge, kronos_now(), p->knowledge->time_to_eat))
+		{
+			pthread_mutex_unlock(p->l_fork);
+			pthread_mutex_unlock(p->r_fork);
+			break ;
+		}
 		if (p->id % 2 != 0)
 		{
 			pthread_mutex_unlock(p->l_fork);
@@ -103,7 +112,13 @@ void	*routine_of_philo(void *args)
 		if (death_check)
 			break ;
 		sleep_mov(p);
-		usleep(p->knowledge->time_to_sleep * 1000);
+		if (!mini_sleeps(p->knowledge, kronos_now(),
+				p->knowledge->time_to_sleep))
+		{
+			// pthread_mutex_unlock(p->l_fork);
+			// pthread_mutex_unlock(p->r_fork);
+			break ;
+		}
 		think_mov(p);
 		pthread_mutex_lock(&p->knowledge->mutex_amount_meal);
 		if (p->knowledge->amount_times_eat != -1)
@@ -132,94 +147,37 @@ void	*routine_of_philo(void *args)
 }
 
 // NAO ESQUECER README
+// PEDIR PARA REFAZEM OS TESTES
+// OLHAR TESTES ANOTADO NOS PAPEIS
+// REFAZER ABSURDOS NO PC DA ESCOLA
+
+// HELPERS DA MAIN
 
 int	main(int argc, char *argv[])
 {
 	t_lyceum			l;
 	t_featherless_biped	*p;
-	bool				meals_checker;
-	long				last_meal_checker;
 
-	memset(&l, 0, sizeof(t_lyceum));
 	p = NULL;
+	memset(&l, 0, sizeof(t_lyceum));
 	parsing(argc, argv, &l);
 	getting_ready_to_feast(&p, &l);
-	p->knowledge->starting_time = kronos_now();
-	while (l.i < l.nbr_philos)
-	{
-		p[l.i].last_time_eaten = p->knowledge->starting_time;
-		pthread_create(&p[l.i].thread_philo, NULL, routine_of_philo, &p[l.i]);
-		l.i++;
-	}
-	pthread_mutex_lock(&l.sl.mutex_start_line);
-	l.sl.all_set = true;
-	pthread_mutex_unlock(&l.sl.mutex_start_line);
-	l.i = 0;
+	wraper_threads_create(&l, p);
 	while (1)
 	{
 		l.i = 0;
 		l.satisfied = true;
 		while (l.i < l.nbr_philos)
 		{
-			if ((l.amount_times_eat != -1)) // significa que tem limite
-			{
-				pthread_mutex_lock(&l.mutex_amount_meal);
-				meals_checker = p[l.i].amount_meals != l.amount_times_eat;
-				pthread_mutex_unlock(&l.mutex_amount_meal);
-				if (meals_checker)
-				{
-					l.satisfied = false;
-					// pthread_mutex_lock(&l.mutex_thanatos);
-					// last_meal_checker = kronos_now()
-					//	- p[l.i].last_time_eaten;
-					// pthread_mutex_unlock(&l.mutex_thanatos);
-					pthread_mutex_lock(&l.mutex_thanatos);
-					if (kronos_now() - p[l.i].last_time_eaten >= l.time_to_die)
-					{
-						pthread_mutex_lock(&l.mutex_thanatos);
-						l.thread_cut_by_atropos = true;
-						pthread_mutex_unlock(&l.mutex_thanatos);
-						pthread_mutex_lock(&l.mutex_printf);
-						printf("%li %i died\n", kronos_now() - l.starting_time,
-							p[l.i].id);
-						pthread_mutex_unlock(&l.mutex_printf);
-						pthread_mutex_unlock(&l.mutex_thanatos);
-						break ;
-					}
-					pthread_mutex_unlock(&l.mutex_thanatos);
-				}
-			}
-			else // nao tem limite de comidas
-			{
-				l.satisfied = false;
-				pthread_mutex_lock(&l.mutex_thanatos);
-				last_meal_checker = kronos_now() - p[l.i].last_time_eaten;
-				pthread_mutex_unlock(&l.mutex_thanatos);
-				if (last_meal_checker >= l.time_to_die)
-				{
-					pthread_mutex_lock(&l.mutex_thanatos);
-					l.thread_cut_by_atropos = true;
-					pthread_mutex_unlock(&l.mutex_thanatos);
-					pthread_mutex_lock(&l.mutex_printf);
-					printf("%li %i died\n", kronos_now() - l.starting_time,
-						p[l.i].id);
-					pthread_mutex_unlock(&l.mutex_printf);
-					break ;
-				}
-			}
+			if (!argos_core_loop(&l, p))
+				break;
 			l.i++;
 		}
-		// acho legar proteger com mutex aqui
 		if (l.satisfied || l.thread_cut_by_atropos)
 			break ;
-		usleep(20);
+		usleep(20); // crair macro CPU_OVERLOAD_AVOIDER ou algo do genero
 	}
-	l.i = 0;
-	while (l.i < l.nbr_philos)
-	{
-		pthread_join(p[l.i].thread_philo, NULL);
-		l.i++;
-	}
+	wraper_threads_join(&l, p);
 	clean_all(p, &l);
 	return (EXIT_SUCCESS);
 }

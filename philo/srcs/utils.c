@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 00:10:49 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/30 18:57:21 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/02 19:19:56 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,10 @@ long	ft_atol(char *str)
 
 long	kronos_now(void)
 {
-	struct timeval tv;
-	long time;
-	long seconds;
-	long micro_seconds;
+	struct timeval	tv;
+	long			time;
+	long			seconds;
+	long			micro_seconds;
 
 	if (gettimeofday(&tv, NULL) == -1)
 		error_msg("Failed function call gettimeofday!\n");
@@ -59,7 +59,23 @@ long	kronos_now(void)
 	return (time);
 }
 
-void	mili_sleep_wraper(long	nbr)
+void	mili_sleep_wraper(long nbr)
 {
 	usleep(nbr * 1000);
+}
+
+bool	mini_sleeps(t_lyceum *l, long start_action, long time_action)
+{
+	while ((kronos_now() - start_action) < time_action)
+	{
+		pthread_mutex_lock(&l->mutex_thanatos);
+		if (l->thread_cut_by_atropos)
+		{
+			pthread_mutex_unlock(&l->mutex_thanatos);
+			return (false);
+		}
+		pthread_mutex_unlock(&l->mutex_thanatos);
+		usleep(500);
+	}
+	return (true);
 }
