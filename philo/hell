@@ -99,3 +99,306 @@ smarques@Argos:/mnt/c/Users/samuc/Desktop/philo/philo$ valgrind --tool=helgrind 
 ==27650== the cost of reduced accuracy of conflicting-access information
 ==27650== For lists of detected and suppressed errors, rerun with: -s
 ==27650== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 19992 from 52)
+
+
+
+
+
+
+
+
+valgrind --tool=helgrind ./philo 1 500 200 100
+==30082== Helgrind, a thread error detector
+==30082== Copyright (C) 2007-2017, and GNU GPL'd, by OpenWorks LLP et al.
+==30082== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==30082== Command: ./philo 1 500 200 100
+==30082==
+15 1 has taken a fork
+==30082== ---Thread-Announcement------------------------------------------
+==30082==
+==30082== Thread #2 was created
+==30082==    at 0x4993A53: clone (clone.S:76)
+==30082==    by 0x4993BD2: __clone_internal_fallback (clone-internal.c:64)
+==30082==    by 0x4993BD2: __clone_internal (clone-internal.c:109)
+==30082==    by 0x490654F: create_thread (pthread_create.c:297)
+==30082==    by 0x49071A4: pthread_create@@GLIBC_2.34 (pthread_create.c:836)
+==30082==    by 0x4854975: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x109C6F: wraper_threads_create (helpers_main.c:48)
+==30082==    by 0x109957: main (main.c:170)
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #2 unlocked a not-locked lock at 0x1FFEFFFB80
+==30082==    at 0x4851A2D: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x1094E0: routine_of_philo (main.c:66)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #3, created by main (main.c:162)
+==30082==
+==30082==
+==30082== ---Thread-Announcement------------------------------------------
+==30082==
+==30082== Thread #1 is the program's root thread
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #2, created by main (main.c:162)
+==30082==
+==30082==  Lock at 0x4A7F040 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A832: setting_table (preparation.c:31)
+==30082==    by 0x10AB17: getting_ready_to_feast (preparation.c:78)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x4a7f040 is 0 bytes inside a block of size 40 alloc'd
+==30082==    at 0x48488A8: malloc (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A7E7: setting_table (preparation.c:26)
+==30082==    by 0x10AB17: getting_ready_to_feast (preparation.c:78)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Block was alloc'd by thread #1
+==30082==
+==30082== Possible data race during write of size 1 at 0x1FFEFFFBD0 by thread #1
+==30082== Locks held: 1, at address 0x1FFEFFFB80
+==30082==    at 0x109B10: end_simulation_verification (helpers_main.c:31)
+==30082==    by 0x109DA0: argos_core_loop (helpers_main.c:74)
+==30082==    by 0x109980: main (main.c:177)
+==30082==
+==30082== This conflicts with a previous read of size 1 by thread #2
+==30082== Locks held: 1, at address 0x4A7F040
+==30082==    at 0x1094F3: routine_of_philo (main.c:64)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==  Address 0x1ffefffbd0 is on thread #1's stack
+==30082==  in frame #2, created by main (main.c:162)
+==30082==
+501 1 died
+==30082== ----------------------------------------------------------------
+==30082==
+==30082==  Lock at 0x4A7F040 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A832: setting_table (preparation.c:31)
+==30082==    by 0x10AB17: getting_ready_to_feast (preparation.c:78)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x4a7f040 is 0 bytes inside a block of size 40 alloc'd
+==30082==    at 0x48488A8: malloc (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A7E7: setting_table (preparation.c:26)
+==30082==    by 0x10AB17: getting_ready_to_feast (preparation.c:78)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Block was alloc'd by thread #1
+==30082==
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082== Possible data race during read of size 1 at 0x1FFEFFFBD0 by thread #2
+==30082== Locks held: 1, at address 0x4A7F040
+==30082==    at 0x1094F3: routine_of_philo (main.c:64)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==
+==30082== This conflicts with a previous write of size 1 by thread #1
+==30082== Locks held: 1, at address 0x1FFEFFFB80
+==30082==    at 0x109B10: end_simulation_verification (helpers_main.c:31)
+==30082==    by 0x109DA0: argos_core_loop (helpers_main.c:74)
+==30082==    by 0x109980: main (main.c:177)
+==30082==  Address 0x1ffefffbd0 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #2 unlocked lock at 0x1FFEFFFB80 currently held by thread #1
+==30082==    at 0x4851A2D: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x109514: routine_of_philo (main.c:69)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #2: Bug in libpthread: write lock granted on mutex/rwlock which is currently wr-held by a different thread
+==30082==    at 0x48512DC: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A510: get_fork_mov (philo_movements.c:20)
+==30082==    by 0x109554: routine_of_philo (main.c:78)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #2 unlocked lock at 0x1FFEFFFB80 currently held by thread #1
+==30082==    at 0x4851A2D: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A595: get_fork_mov (philo_movements.c:28)
+==30082==    by 0x109554: routine_of_philo (main.c:78)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #2: Bug in libpthread: write lock granted on mutex/rwlock which is currently wr-held by a different thread
+==30082==    at 0x48512DC: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x1095C6: routine_of_philo (main.c:84)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082==  Lock at 0x4A7F040 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A832: setting_table (preparation.c:31)
+==30082==    by 0x10AB17: getting_ready_to_feast (preparation.c:78)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x4a7f040 is 0 bytes inside a block of size 40 alloc'd
+==30082==    at 0x48488A8: malloc (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A7E7: setting_table (preparation.c:26)
+==30082==    by 0x10AB17: getting_ready_to_feast (preparation.c:78)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Block was alloc'd by thread #1
+==30082==
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082== Possible data race during write of size 8 at 0x4A7F0D8 by thread #2
+==30082== Locks held: 1, at address 0x4A7F040
+==30082==    at 0x1095D0: routine_of_philo (main.c:85)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==
+==30082== This conflicts with a previous read of size 8 by thread #1
+==30082== Locks held: 1, at address 0x1FFEFFFB80
+==30082==    at 0x109AF1: end_simulation_verification (helpers_main.c:29)
+==30082==    by 0x109DA0: argos_core_loop (helpers_main.c:74)
+==30082==    by 0x109980: main (main.c:177)
+==30082==  Address 0x4a7f0d8 is 40 bytes inside a block of size 56 alloc'd
+==30082==    at 0x48488A8: malloc (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A999: make_faetherless_bipes (preparation.c:54)
+==30082==    by 0x10AB4A: getting_ready_to_feast (preparation.c:80)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Block was alloc'd by thread #1
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #2 unlocked lock at 0x1FFEFFFB80 currently held by thread #1
+==30082==    at 0x4851A2D: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x1095E7: routine_of_philo (main.c:86)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #2: Bug in libpthread: write lock granted on mutex/rwlock which is currently wr-held by a different thread
+==30082==    at 0x48512DC: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x1095FB: routine_of_philo (main.c:87)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082==  Lock at 0x4A7F040 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A832: setting_table (preparation.c:31)
+==30082==    by 0x10AB17: getting_ready_to_feast (preparation.c:78)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x4a7f040 is 0 bytes inside a block of size 40 alloc'd
+==30082==    at 0x48488A8: malloc (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A7E7: setting_table (preparation.c:26)
+==30082==    by 0x10AB17: getting_ready_to_feast (preparation.c:78)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Block was alloc'd by thread #1
+==30082==
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082== Possible data race during read of size 1 at 0x1FFEFFFBD0 by thread #2
+==30082== Locks held: 1, at address 0x4A7F040
+==30082==    at 0x109604: routine_of_philo (main.c:88)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==
+==30082== This conflicts with a previous write of size 1 by thread #1
+==30082== Locks held: 1, at address 0x1FFEFFFB80
+==30082==    at 0x109B10: end_simulation_verification (helpers_main.c:31)
+==30082==    by 0x109DA0: argos_core_loop (helpers_main.c:74)
+==30082==    by 0x109980: main (main.c:177)
+==30082==  Address 0x1ffefffbd0 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #2 unlocked lock at 0x1FFEFFFB80 currently held by thread #1
+==30082==    at 0x4851A2D: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x109621: routine_of_philo (main.c:89)
+==30082==    by 0x4854B7A: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x4906AA3: start_thread (pthread_create.c:447)
+==30082==    by 0x4993A63: clone (clone.S:100)
+==30082==  Lock at 0x1FFEFFFB80 was first observed
+==30082==    at 0x48562EB: pthread_mutex_init (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10ABAB: getting_ready_to_feast (preparation.c:87)
+==30082==    by 0x10993E: main (main.c:169)
+==30082==  Address 0x1ffefffb80 is on thread #1's stack
+==30082==  in frame #9, created by main (main.c:162)
+==30082==
+==30082==
+==30082== ----------------------------------------------------------------
+==30082==
+==30082== Thread #1's call to pthread_mutex_destroy failed
+==30082==    with error code 16 (EBUSY: Device or resource busy)
+==30082==    at 0x4851148: ??? (in /usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so)
+==30082==    by 0x10A133: clean_all (error_and_clean.c:72)
+==30082==    by 0x1099FC: main (main.c:186)
+==30082==
+==30082==
+==30082== Use --history-level=approx or =none to gain increased speed, at
+==30082== the cost of reduced accuracy of conflicting-access information
+==30082== For lists of detected and suppressed errors, rerun with: -s
+==30082== ERROR SUMMARY: 3200 errors from 13 contexts (suppressed: 29217 from 45)
+smarques@Argos:/mnt/c/Users/samuc/Desktop/philo/philo$

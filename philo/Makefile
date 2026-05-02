@@ -33,7 +33,7 @@ v:
 	valgrind $(VFLAG) ./$(NAME) 5 600 200 200
 
 h: $(NAME) clean
-	valgrind $(HFLAG) ./$(NAME) 50 1000 200 100
+	valgrind $(HFLAG) ./$(NAME) 1 500 200 100
 
 .PHONY: all clean fclean re v
 

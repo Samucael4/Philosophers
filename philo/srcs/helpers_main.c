@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:15:04 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/02 20:15:45 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/02 20:46:30 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ bool	argos_core_loop(t_lyceum *l, t_featherless_biped *p)
 				pthread_mutex_unlock(&l->mutex_amount_meal);
 				return (false);
 			}
-			pthread_mutex_unlock(&l->mutex_amount_meal);
 		}
+		pthread_mutex_unlock(&l->mutex_amount_meal);
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 00:10:49 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/02 19:19:56 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/02 20:24:30 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ long	kronos_now(void)
 	return (time);
 }
 
+
+// possivelmente inutil, apagar
 void	mili_sleep_wraper(long nbr)
 {
 	usleep(nbr * 1000);

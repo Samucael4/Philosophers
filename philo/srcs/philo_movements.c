@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 15:57:26 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/01 19:43:18 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/03 00:44:05 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ void	get_fork_mov(t_featherless_biped *p)
 	if (!p->knowledge->thread_cut_by_atropos)
 	{
 		pthread_mutex_lock(&p->knowledge->mutex_printf);
+		printf("%li %i has taken a fork\n", kronos_now()
+			- p->knowledge->starting_time, p->id);
 		printf("%li %i has taken a fork\n", kronos_now()
 			- p->knowledge->starting_time, p->id);
 		pthread_mutex_unlock(&p->knowledge->mutex_printf);
