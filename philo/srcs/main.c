@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 21:19:51 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/03 00:54:01 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/03 01:09:50 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,14 +111,41 @@ bool	eating_release_forks(t_featherless_biped *p)
 	return (true);
 }
 
+void	think_a_little(t_featherless_biped *p)
+{
+	if (p->knowledge->time_to_sleep <= p->knowledge->time_to_eat)
+	{
+		if (p->knowledge->nbr_forks % 2 == 0)
+			usleep((p->knowledge->time_to_eat - p->knowledge->time_to_sleep)
+				* 1000);
+		else
+		{
+			usleep((p->knowledge->time_to_eat * 2 - p->knowledge->time_to_sleep)
+				* 1000);
+		}
+	}
+}
+
+bool	am_i_full(t_featherless_biped *p)
+{
+	pthread_mutex_lock(&p->knowledge->mutex_amount_meal);
+	if (p->knowledge->amount_times_eat != -1)
+	{
+		if (p->amount_meals == p->knowledge->amount_times_eat)
+		{
+			pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
+			return (true);
+		}
+	}
+	pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
+	return (false);
+}
+
 void	*routine_of_philo(void *args)
 {
-	int					i;
-	bool				death_check;
 	t_featherless_biped	*p;
 
 	p = (t_featherless_biped *)args;
-	i = 0;
 	while (1)
 	{
 		if (wait_all_start(p))
@@ -142,32 +169,9 @@ void	*routine_of_philo(void *args)
 				p->knowledge->time_to_sleep))
 			break ;
 		think_mov(p);
-		// ---------CHECKER FOR BELLY IS FULL---------------------------
-		pthread_mutex_lock(&p->knowledge->mutex_amount_meal);
-		if (p->knowledge->amount_times_eat != -1)
-		{
-			if (p->amount_meals == p->knowledge->amount_times_eat)
-			{
-				pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
-				break ;
-			}
-		}
-		// --------------------------------------------------------------
-		// ---------MAKE THEN THINK BEFORE-------------------------------
-		pthread_mutex_unlock(&p->knowledge->mutex_amount_meal);
-		if (p->knowledge->time_to_sleep <= p->knowledge->time_to_eat)
-		{
-			if (p->knowledge->nbr_forks % 2 == 0)
-				usleep((p->knowledge->time_to_eat - p->knowledge->time_to_sleep)
-					* 1000);
-			else
-			{
-				usleep((p->knowledge->time_to_eat * 2
-						- p->knowledge->time_to_sleep) * 1000);
-			}
-		}
-		// -------------------------------------------------------------------
-		i++;
+		if (am_i_full(p))
+			break ;
+		think_a_little(p);
 	}
 	return (NULL);
 }
