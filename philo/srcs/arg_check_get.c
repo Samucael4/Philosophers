@@ -6,11 +6,11 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/06 23:56:04 by smarques          #+#    #+#             */
-/*   Updated: 2026/04/30 12:46:29 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/04 13:50:07 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philophers.h"
+#include "../includes/philosophers.h"
 
 static int	ft_isdigit(int c)
 {

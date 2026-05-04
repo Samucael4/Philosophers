@@ -6,14 +6,11 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 15:57:26 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/03 00:44:05 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/04 13:50:26 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philophers.h"
-
-// antes eu dava mutex no printf no exterior e depois a thanatos na interior
-// mas eu troquei e acho que resolveu o problema
+#include "../includes/philosophers.h"
 
 void	get_fork_mov(t_featherless_biped *p)
 {

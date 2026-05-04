@@ -6,11 +6,11 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 00:10:49 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/02 20:24:30 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/04 13:50:36 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philophers.h"
+#include "../includes/philosophers.h"
 
 size_t	ft_strlen(const char *s)
 {
@@ -57,13 +57,6 @@ long	kronos_now(void)
 	micro_seconds = tv.tv_usec / 1000;
 	time = seconds + micro_seconds;
 	return (time);
-}
-
-
-// possivelmente inutil, apagar
-void	mili_sleep_wraper(long nbr)
-{
-	usleep(nbr * 1000);
 }
 
 bool	mini_sleeps(t_lyceum *l, long start_action, long time_action)

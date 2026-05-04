@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philophers.h                                       :+:      :+:    :+:   */
+/*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 20:24:31 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/02 20:17:20 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/04 14:56:35 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@ typedef struct s_lyceum
 	t_start_line	sl;
 }					t_lyceum;
 
-// verificar se estou inicializando em lugares corretos as
-// infos que tem de ser inicializadas
 typedef struct s_featherless_biped
 {
 	int				id;
@@ -71,14 +69,15 @@ void				getting_ready_to_feast(t_featherless_biped **p,
 
 // Error msgs and clean routine
 void				error_msg(char *str);
-void				error_exec_clean(t_lyceum *l, t_featherless_biped *p);
 void				clean_all(t_featherless_biped *p, t_lyceum *l);
+void				mutex_cleaner(t_lyceum *l, int amount);
+void				clean_after_mutex(t_lyceum *l, int fail_index);
+void				clean_after_philos(t_lyceum *l);
 
 // Utils
 size_t				ft_strlen(const char *s);
 long				ft_atol(char *str);
 long				kronos_now(void);
-void				mili_sleep_wraper(long nbr);
 bool				mini_sleeps(t_lyceum *l, long start_action,
 						long time_action);
 
@@ -92,10 +91,22 @@ void				think_mov(t_featherless_biped *p);
 void				wraper_threads_join(t_lyceum *l, t_featherless_biped *p);
 bool				end_simulation_verification(t_lyceum *l,
 						t_featherless_biped *p);
-void				wraper_threads_create(t_lyceum *l, t_featherless_biped *p);
+int					wraper_threads_create(t_lyceum *l, t_featherless_biped *p);
 bool				argos_core_loop(t_lyceum *l, t_featherless_biped *p);
+void				safe_threads_create(int status, t_lyceum *l,
+						t_featherless_biped *p);
 
-// Routine and helpers
+// Routine and helpers and utils
 void				*routine_of_philo(void *args);
+bool				eating_release_forks(t_featherless_biped *p);
+void				think_a_little(t_featherless_biped *p);
+bool				am_i_full(t_featherless_biped *p);
+bool				routine_core_loop(t_featherless_biped *p);
+bool				wait_all_start(t_featherless_biped *p);
+bool				life_checker(t_featherless_biped *p);
+void				enven_order_grab(t_featherless_biped *p);
+void				odd_order_grab(t_featherless_biped *p);
+bool				forks_order_grab(t_featherless_biped *p);
+void				taking_notes(t_featherless_biped *p);
 
 #endif

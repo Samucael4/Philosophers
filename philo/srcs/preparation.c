@@ -6,33 +6,27 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 12:08:18 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/02 19:11:48 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/04 14:55:14 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philophers.h"
+#include "../includes/philosophers.h"
 
-// mudar para int, se der tudo certo, retornar -1
-// se der erro, retorna i, que eh o index que deu errado
-// isso vai ajudar a criar um loop para dar
-// destroy nas mutex criadas ate entao e limpar tudo
-// verificar retorno de todas as funcoes
-
-static bool	setting_table(t_lyceum *l)
+static int	setting_table(t_lyceum *l)
 {
 	int	i;
 
 	i = 0;
 	l->mutex_fork = malloc(sizeof(pthread_mutex_t) * l->nbr_forks);
 	if (!l->mutex_fork)
-		return (false);
+		return (-1);
 	while (i < l->nbr_forks)
 	{
 		if (pthread_mutex_init(&l->mutex_fork[i], NULL))
-			return (false);
+			return (i);
 		i++;
 	}
-	return (true);
+	return (-2);
 }
 
 static void	getting_philo_data(t_featherless_biped **p, t_lyceum *l, int i)
@@ -73,18 +67,39 @@ static bool	make_faetherless_bipes(t_featherless_biped **p, t_lyceum *l)
 	return (true);
 }
 
+void	safe_mutiexs_init(t_lyceum *l)
+{
+	if (pthread_mutex_init(&l->sl.mutex_start_line, NULL))
+		error_msg("Mutex init fail!\n");
+	if (pthread_mutex_init(&l->mutex_printf, NULL))
+	{
+		pthread_mutex_destroy(&l->sl.mutex_start_line);
+		error_msg("Mutex init fail!\n");
+	}
+	if (pthread_mutex_init(&l->mutex_thanatos, NULL))
+	{
+		pthread_mutex_destroy(&l->mutex_printf);
+		pthread_mutex_destroy(&l->sl.mutex_start_line);
+		error_msg("Mutex init fail!\n");
+	}
+	if (pthread_mutex_init(&l->mutex_amount_meal, NULL))
+	{
+		pthread_mutex_destroy(&l->mutex_thanatos);
+		pthread_mutex_destroy(&l->mutex_printf);
+		pthread_mutex_destroy(&l->sl.mutex_start_line);
+		error_msg("Mutex init fail!\n");
+	}
+}
+
 void	getting_ready_to_feast(t_featherless_biped **p, t_lyceum *l)
 {
-	if (!setting_table(l))
-		write(2, "erro", 4); // exec clean em tudo
+	int	set_table_status;
+
+	safe_mutiexs_init(l);
+	set_table_status = setting_table(l);
+	if (set_table_status != -2)
+		clean_after_mutex(l, set_table_status);
 	if (!make_faetherless_bipes(p, l))
-		write(2, "erro", 4); // exec_clean em tudo ate agr
-	pthread_mutex_init(&l->sl.mutex_start_line, NULL);
-	// rever se tem que colcoar algo especifico em NULL
-	// e tbm ver do que se trata esse arg
-	// tem que verificar as criacoes das theads??
-	pthread_mutex_init(&l->mutex_printf, NULL);
-	pthread_mutex_init(&l->mutex_thanatos, NULL);
-	pthread_mutex_init(&l->mutex_amount_meal, NULL);
+		clean_after_philos(l);
 	l->sl.all_set = false;
 }
