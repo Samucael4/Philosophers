@@ -1,33 +1,49 @@
-# This project has been created as part of the 42 curriculum by smarques
+*This project has been created as part of the 42 curriculum by smarques.*
 
 ## Description
-clearly presents the project, including its goal and a
-brief overview.
+
+The goal of this project is to understand the basics of threading a process and how to work within the same memory space. It introduces the concepts of concurrent programming, mutexes, data races, and deadlocks.
+
+The project is based on Edsger Dijkstra's classic "Dining Philosophers problem". The simulation consists of philosophers sitting at a round table, alternating between three states: eating, sleeping, and thinking. Since they need two forks to eat and there is only one fork between each philosopher, resource management is required.
+
+Handling an odd number of philosophers (like the classic 5) is particularly challenging because it naturally creates an asymmetry in resource distribution, increasing the risk of deadlocks if the lock ordering isn't managed perfectly.
 
 ## Instructions
-section containing any relevant information about compilation,
-installation, and/or execution.
+
+To compile and run the project, navigate to the repository folder and use `make`:
+
+```
+cd philo
+make
+```
+
+Execute the program with the following arguments:
+
+```
+./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
+```
+
+* **`number_of_philosophers`**: The number of philosophers and also the number of forks.
+* **`time_to_die`** (in ms): If a philosopher didn't start eating `time_to_die` milliseconds since the beginning of their last meal, they die.
+* **`time_to_eat`** (in ms): The time it takes for a philosopher to eat (they need to hold two forks).
+* **`time_to_sleep`** (in ms): The time a philosopher will spend sleeping.
+* **`number_of_times_each_philosopher_must_eat`** *(optional)*: If all philosophers have eaten at least this many times, the simulation stops.
+
+**Example of execution:**
+```
+./philo 5 800 200 200
+```
 
 ## Resources
-section listing classic references related to the topic (documen-
-tation, articles, tutorials, etc.), as well as a description of
-All my references were the explanations in videos i watched in youtube,
-little documentations was read  by me, the videos and help
-from peers was enough
 
-apagar alguns desses links pois nem todos foram uteis
+Most of the knowledge required for this project was acquired through peer-to-peer discussions, YouTube tutorials about multithreading in C, and some articles.
 
-https://www.youtube.com/watch?v=wyjHTiizCJA
-https://www.youtube.com/watch?v=OrM7nZcxXZU&list=PLBlnK6fEyqRgKl0MbI6kbI5ffNt7BF8Fn
-https://www.youtube.com/watch?v=HW2Wcx-ktsc&list=PLBlnK6fEyqRh5YXKAPCZPVZPkdhQa9Skz&index=2
-https://www.youtube.com/watch?v=ph2awKa8r5Y&list=PLBlnK6fEyqRjDf_dmCEXgl6XjVKDDj0M2
-https://www.youtube.com/watch?v=d9s_d28yJq0&list=PLfqABt5AS4FmuQf70psXrsMLEDQXNkLq2
-https://www.youtube.com/watch?v=NbwbQQB7xNQ&t=78s
+https://docs.oracle.com/cd/E19205-01/820-0619/geokj/index.html
+https://docs.oracle.com/cd/E19205-01/820-0619/geojs/index.html
 https://www.youtube.com/watch?v=zOpzGHwJ3MU
-https://www.youtube.com/watch?v=dGO2YShefYo
-https://www.youtube.com/watch?v=VSkvwzqo-Pk
-https://en.wikipedia.org/wiki/Epoch_(computing)
-https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+https://www.youtube.com/watch?v=IKG1P4rgm54
+https://www.youtube.com/watch?v=oq29KUy29iQ
 
-### How AI was used:
-specifying for which tasks and which parts of the project.
+## How AI was used
+
+AI was used for theoretical explanations. It helped me understand the concepts of the project, foresee potential concurrency issues (deadlocks and data races), and interpret complex Helgrind error logs during the debugging phase, since it was my first time using Helgrind.
