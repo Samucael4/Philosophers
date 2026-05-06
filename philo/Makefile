@@ -1,6 +1,6 @@
 NAME			= philo
 CC				= cc
-CFLAGS			= -Wall -Werror -Wextra -Iincludes
+CFLAGS			= -Wall -Werror -Wextra -Iincludes -pthread
 
 SRCS		+= $(addprefix srcs/, main.c helpers_main.c utils.c helpers_routine.c routine_utils.c error_and_clean.c arg_check_get.c philo_movements.c preparation.c)
 

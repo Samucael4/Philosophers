@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 21:19:51 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/04 15:01:15 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/06 19:21:00 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	main(int argc, char *argv[])
 		}
 		if (l.satisfied || l.thread_cut_by_atropos)
 			break ;
-		usleep(20);
+		usleep(100);
 	}
 	wraper_threads_join(&l, p);
 	clean_all(p, &l);

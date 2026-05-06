@@ -6,7 +6,7 @@
 /*   By: smarques <smarques@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:15:04 by smarques          #+#    #+#             */
-/*   Updated: 2026/05/04 15:09:49 by smarques         ###   ########.fr       */
+/*   Updated: 2026/05/06 19:19:54 by smarques         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,19 @@ bool	end_simulation_verification(t_lyceum *l, t_featherless_biped *p)
 
 int	wraper_threads_create(t_lyceum *l, t_featherless_biped *p)
 {
-	p->knowledge->starting_time = kronos_now();
 	while (l->i < l->nbr_philos)
 	{
 		p[l->i].last_time_eaten = p->knowledge->starting_time;
 		if (pthread_create(&p[l->i].thread_philo, NULL, routine_of_philo,
-				&p[l->i]))
+			&p[l->i]))
 			return (l->i);
+		l->i++;
+	}
+	p->knowledge->starting_time = kronos_now();
+	l->i = 0;
+	while (l->i < l->nbr_philos)
+	{
+		p[l->i].last_time_eaten = p->knowledge->starting_time;
 		l->i++;
 	}
 	pthread_mutex_lock(&l->sl.mutex_start_line);
